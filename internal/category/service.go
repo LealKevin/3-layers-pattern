@@ -2,46 +2,20 @@ package category
 
 import "fmt"
 
-type Service struct {
-	Store Store
-}
+type Service struct{}
 
 func NewService(store Store) *Service {
-	return &Service{
-		Store: store,
-	}
+	return &Service{}
 }
 
-func (s *Service) GetAll() ([]Category, error) {
-	return s.Store.GetAll()
-}
-
-func (s *Service) GetById(id int) (Category, error) {
-	category, err := s.Store.GetById(id)
-	if err != nil {
-		return Category{}, err
-	}
-	return category, nil
-}
-
-func (s *Service) Create(category Category) error {
+func (s *Service) Create(name string) (Category, error) {
 	characterLimit := 3
-	if len(category.Name) < characterLimit {
-		return fmt.Errorf("category name can't have less then: %v characters ", characterLimit)
+	if len(name) < characterLimit {
+		return Category{}, fmt.Errorf("category name can't have less then: %v characters ", characterLimit)
 	}
-	err := s.Store.Create(category)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+	var category Category
+	category.Id = 1
+	category.Name = name
 
-func (s *Service) Delete(id int, categories []Category) error {
-	for i, category := range categories {
-		if category.Id == id {
-			s.Store.Delete(i)
-			return nil
-		}
-	}
-	return fmt.Errorf("unable to find category with id: %v", id)
+	return category, nil
 }

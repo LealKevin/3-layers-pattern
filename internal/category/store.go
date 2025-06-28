@@ -10,7 +10,7 @@ type Category struct {
 type Store interface {
 	GetAll() ([]Category, error)
 	GetById(id int) (Category, error)
-	Create(category Category) error
+	Save(category Category) error
 	Delete(id int) error
 }
 
@@ -41,12 +41,17 @@ func (s *MemoryStore) GetById(id int) (Category, error) {
 	return Category{}, fmt.Errorf("category with ID %v not found", id)
 }
 
-func (s *MemoryStore) Create(category Category) error {
+func (s *MemoryStore) Save(category Category) error {
 	s.categories = append(s.categories, category)
 	return nil
 }
 
-func (s *MemoryStore) Delete(index int) error {
-	s.categories = append(s.categories[:index], s.categories[index+1:]...)
-	return nil
+func (s *MemoryStore) Delete(id int) error {
+	for i, category := range s.categories {
+		if category.Id == id {
+			s.categories = append(s.categories[:i], s.categories[i+1:]...)
+			return nil
+		}
+	}
+	return fmt.Errorf("unable to delete category with id: %v", id)
 }
